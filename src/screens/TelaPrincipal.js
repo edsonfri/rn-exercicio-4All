@@ -3,21 +3,47 @@ import {
 	StyleSheet,
 	View,
 	Text,
-	Button,
+	Linking,
 	TouchableHighlight,
 	ImageBackground,
 	Image,
 	Alert
 } from 'react-native'
+import axios from 'axios'
+import { server, showError} from '../common'
 
 import foto from '../../assets/Imagens/FOTO.png'
 import mapa from '../../assets/Imagens/MAPA.png'
 import ligar from '../../assets/Imagens/LIGAR_copy.png'
 import avatar from '../../assets/Imagens/ListaTopo.jpg'
 import endereco from '../../assets/Imagens/ENDERECO.png'
+import servicos from '../../assets/Imagens/SERVICOS.png'
+import comentarios from '../../assets/Imagens/COMENTARIOS.png'
+import favoritos from '../../assets/Imagens/FAVORITOS_copy.png'
+
+
+const initialState = {
+    tarefa: []
+}
 
 class TelaPrincipal extends Component {
 
+	state = {
+        ...initialState
+	}
+	
+	componentDidMount() {
+		this.loadTasksById()
+	}
+
+	loadTasksById = async () => {
+        try {
+            const res = await axios.get(`${server}/tarefa/${this.props.navigation.state.params.id}`)
+            this.setState({ tarefa: res.data })
+        } catch (err) {
+            showError(err)
+        }
+    }
 	endereco(){
 		Alert.alert(  
             'Edereco',  
@@ -33,31 +59,43 @@ class TelaPrincipal extends Component {
         );  
 	}
 
+	dialCall = (number) => {
+		let phoneNumber = '';
+		if (Platform.OS === 'android') { phoneNumber = `tel:${number}`; }
+		else {phoneNumber = `telprompt:${number}`; }
+		Linking.openURL(phoneNumber);
+	 };
+
     render() {
 		
 		return (
             <View style={styles.container}>
                 
-				<ImageBackground  source={foto} style={styles.background}>
-					
-					
-				</ImageBackground>
+				<Image source={{uri: this.state.tarefa.urlFoto}} style={styles.background}/>
 
 				<View style={styles.nomeContainer}>
                     <Text style={styles.textTitulo}>
-                        LOREM
+                        {this.state.tarefa.titulo}
                     </Text>
                 </View>
                
                 <View style={styles.detalheContainer}>
 					<View style={styles.buttonBar}>
 						<View style={styles.button} >
-							<Image source={ligar} style={styles.imageBar} />
-							<Text style={styles.textButtonBar}>Ligar</Text>
+							<TouchableHighlight onPress={()=>{this.dialCall(this.state.tarefa.telefone)}}>
+								<View>		
+									<Image source={ligar} style={styles.imageBar} />
+									<Text style={styles.textButtonBar}>Ligar</Text>
+								</View>
+                            </TouchableHighlight> 
 						</View>
 						<View style={styles.button} >
-							
-							<Text style={styles.textButtonBar}>Serviços</Text>
+							<TouchableHighlight onPress={() => this.props.navigation.navigate('TelaServicos')}>
+								<View>		
+									<Image source={servicos} style={styles.imageBar} />
+									<Text style={styles.textButtonBar}>Serviços</Text>
+								</View>
+                            </TouchableHighlight> 
 						</View>
 						<View style={styles.button} >
 							
@@ -70,16 +108,16 @@ class TelaPrincipal extends Component {
 							
 						</View>
 						<View style={styles.button} >
-							
+							<Image source={comentarios} style={styles.imageBar} />
 							<Text style={styles.textButtonBar}>Comentarios</Text>
 						</View>
 						<View style={styles.button} >
-							
+							<Image source={favoritos} style={styles.imageBar} />
 							<Text style={styles.textButtonBar}>Favoritos</Text>
 						</View>
 					</View>
 					<View style={styles.descriptionContainer}>
-						<Text style={styles.descriptionText}>asdasfasfasfasfsfsdffsdfsdafsafsafsafsdafafafsadfasdasfasfasfasfsfsdffsdfsdafsafsafsafsdafafafsadfsdfsdfsddsfs</Text>	
+						<Text style={styles.descriptionText}>{this.state.tarefa.texto}</Text>	
 					</View>
                 </View>
 				
@@ -88,12 +126,12 @@ class TelaPrincipal extends Component {
 						<Text >mapa</Text>	
 					</View>
 					<View style={styles.mapaEndereco}>
-						<Text style={styles.textEndereco}>asdasadfsdfsdfsddsfs</Text>	
+						<Text style={styles.textEndereco}>{this.state.tarefa.endereco}</Text>	
 					</View>
 				</ImageBackground>
 
 				<View style={styles.comentariosContainer}>
-					<Image source={avatar} style={styles.avatar} />
+					<Image source={{uri: this.state.tarefa.urlLogo}} style={styles.avatar} />
 					<Text>
                         comentarios
                     </Text>
@@ -114,7 +152,7 @@ const styles = StyleSheet.create({
     },
     background: {
         flex: 3,
-		backgroundColor: '#E08B00'
+		
 		
 	},
 	nomeContainer: {
@@ -124,7 +162,8 @@ const styles = StyleSheet.create({
 	},
 	textTitulo: {
         color: '#E08B00',
-		fontSize: 30
+		fontSize: 30,
+		paddingTop: 12
     },
     detalheContainer: {
         flex: 2,
@@ -167,6 +206,7 @@ const styles = StyleSheet.create({
 	},
 	descriptionContainer: {
 		flexDirection: 'row',
+		paddingTop: 10
 	},
 	descriptionText: {
 		color: '#E08B00'
@@ -182,6 +222,7 @@ const styles = StyleSheet.create({
         height: 50,
 		width: 50,
 		alignSelf: 'center',
+		
 	},
 	avatar: {
         width: 75,

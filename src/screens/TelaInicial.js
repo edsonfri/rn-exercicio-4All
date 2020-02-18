@@ -3,23 +3,46 @@ import {
 	StyleSheet,
     Text,
     View,
+    TouchableHighlight,
     ImageBackground,
     FlatList,
     TouchableOpacity,
     Platform,
     Button
 } from 'react-native'
-
-import todayImage from '../../assets/Imagens/ListaTopo.jpg'
+import axios from 'axios'
 import moment from 'moment'
+import { server, showError} from '../common'
 import commonStyles from '../commonStyles'
 import Task from '../components/Task'
 
+const initialState = {
+    tarefas: []
+}
 
 class TelaInicial extends Component {
+    state = {
+        ...initialState
+    }
+
+    componentDidMount = async () => {
+        this.loadTasks()
+    }
+
+    loadTasks = async () => {
+        try {
+            const res = await axios.get(`${server}/tarefa`)
+            this.setState({ tarefas: res.data.lista })
+        } catch (err) {
+            showError(err)
+        }
+    }
+    
+
     render() {
         const today = moment().locale('pt-br').format('ddd, D [de] MMMM')
-
+        console.log('estado' + this.state.tarefas);
+        
 		return (
             <View style={styles.container}>
                 <View  style={styles.background}>
@@ -30,7 +53,20 @@ class TelaInicial extends Component {
                 </View>
                 <View style={styles.taskContainer}>
                     <View>
-                        <Button title="aa" onPress={() => this.props.navigation.navigate('TelaPrincipal')} />
+                        
+                            <View>
+                            <FlatList data={this.state.tarefas} 
+                                keyExtractor={item => `${item.id}`} renderItem={(item) => 
+                                
+                                    <TouchableHighlight onPress={() => this.props.navigation.navigate(
+                                        'TelaPrincipal', {id: item.item})}>
+                                        <Task {...item}/>
+                                    </TouchableHighlight>                                
+                                
+                                }/>
+                                
+                            </View>
+                        
                     </View>
                     
                 </View>

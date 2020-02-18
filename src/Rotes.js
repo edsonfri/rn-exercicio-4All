@@ -3,6 +3,7 @@ import { createAppContainer } from 'react-navigation'
 
 import TelaInicial from './screens/TelaInicial'
 import TelaPrincipal from './screens/TelaPrincipal'
+import TelaServicos from './screens/Servicos'
 
 const screens = {
     TelaInicial: {
@@ -20,8 +21,15 @@ const screens = {
             headerTitleStyle: { fontSize: 20, color: '#fff'},
             headerTitleAlign: 'center',
           }),
-          
-        
+    },
+    TelaServicos: {
+        screen: TelaServicos,        
+        navigationOptions: ({ navigation }) => ({
+            title: 'Serviços',
+            headerStyle: { backgroundColor: '#E08B00'},
+            headerTitleStyle: { fontSize: 20, color: '#fff'},
+            headerTitleAlign: 'center',
+          }),
     }
 }
 

@@ -2,10 +2,7 @@ import React from 'react'
 import { 
     StyleSheet,
     Text,
-    View,
-    TouchableWithoutFeedback,
-    TouchableOpacity,
-    Button
+    View
 } from 'react-native'
 import commonStyles from '../commonStyles'
 
@@ -13,7 +10,9 @@ export default props => {
     return (
         <View style={styles.container}>
             <View style={styles.containerButton}>
-                <Button title={props.titulo} onPress={() => this.props.navigation.navigate('TelaPrincipal')} />
+                <Text style={styles.description}>
+                    {props.item}
+                </Text>
             </View>
         </View>
     )
@@ -27,8 +26,8 @@ const styles = StyleSheet.create({
         borderColor: '#AAA',
     },
     description: {
-        fontFamily: commonStyles.fontFamily,
-        color: commonStyles.colors.mainText,
+        alignSelf: 'center',
+        color: 'orange',
         fontSize: 15,
     },
     containerButton: {
