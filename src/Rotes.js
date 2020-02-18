@@ -16,7 +16,7 @@ const screens = {
     TelaPrincipal:{
         screen: TelaPrincipal,
         navigationOptions: ({ navigation }) => ({
-            title: 'aaa',
+            title: '',
             headerStyle: { backgroundColor: '#E08B00'},
             headerTitleStyle: { fontSize: 20, color: '#fff'},
             headerTitleAlign: 'center',

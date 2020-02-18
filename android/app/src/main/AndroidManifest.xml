@@ -2,6 +2,9 @@
   package="com.exercicio4all">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps"/>
 
     <application
       android:name=".MainApplication"
@@ -21,6 +24,9 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+
+      <meta-data android:name="com.google.android.geo.API_KEY"      
+                 android:value="AIzaSyDwE3EC6kRY_zpgquVKKOAoERH-fyefjRw"/>
     </application>
 
 </manifest>

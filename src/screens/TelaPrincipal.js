@@ -5,15 +5,17 @@ import {
 	Text,
 	Linking,
 	TouchableHighlight,
-	ImageBackground,
+	FlatList,
 	Image,
 	Alert
 } from 'react-native'
 import axios from 'axios'
+import { MapView, Polyline } from 'react-native-maps'
 import { server, showError} from '../common'
 
+
 import foto from '../../assets/Imagens/FOTO.png'
-import mapa from '../../assets/Imagens/MAPA.png'
+import mapa from '../../assets/Imagens/MAPA2.png'
 import ligar from '../../assets/Imagens/LIGAR_copy.png'
 import avatar from '../../assets/Imagens/ListaTopo.jpg'
 import endereco from '../../assets/Imagens/ENDERECO.png'
@@ -26,37 +28,44 @@ const initialState = {
     tarefa: []
 }
 
+const initialRegion={
+	latitude: 37.78825,
+	longitude: -122.4324,
+	latitudeDelta: 0.0922,
+	longitudeDelta: 0.0421,
+  }
+
 class TelaPrincipal extends Component {
 
 	state = {
         ...initialState
 	}
 	
-	componentDidMount() {
+	componentDidMount = () => {
 		this.loadTasksById()
 	}
 
 	loadTasksById = async () => {
         try {
             const res = await axios.get(`${server}/tarefa/${this.props.navigation.state.params.id}`)
-            this.setState({ tarefa: res.data })
-        } catch (err) {
+			this.setState({ tarefa: res.data })
+			
+		} 
+		catch (err) {
             showError(err)
         }
     }
-	endereco(){
+	endereco = (endereco) =>{
 		Alert.alert(  
-            'Edereco',  
-            'My Alert Msg',  
-            [  
-                {  
-                    text: 'Cancel',  
-                    onPress: () => console.log('Cancel Pressed'),  
-                    style: 'cancel',  
-                },  
-                {text: 'OK', onPress: () => console.log('OK Pressed')},  
+            'Edereco:',  
+            `${endereco}`,  
+            [{  
+				text: 'Cancel',  
+				onPress: () => console.log('Cancel Pressed'),  
+				style: 'cancel',  
+			},{text: 'OK', onPress: () => console.log('OK Pressed')},  
             ]  
-        );  
+        )
 	}
 
 	dialCall = (number) => {
@@ -68,15 +77,15 @@ class TelaPrincipal extends Component {
 
     render() {
 		
+		
 		return (
             <View style={styles.container}>
                 
 				<Image source={{uri: this.state.tarefa.urlFoto}} style={styles.background}/>
 
 				<View style={styles.nomeContainer}>
-                    <Text style={styles.textTitulo}>
-                        {this.state.tarefa.titulo}
-                    </Text>
+                    <Text style={styles.textTitulo}>{this.state.tarefa.titulo}</Text>
+					<Image source={{uri: this.state.tarefa.urlLogo}} style={styles.avatar} />
                 </View>
                
                 <View style={styles.detalheContainer}>
@@ -99,7 +108,7 @@ class TelaPrincipal extends Component {
 						</View>
 						<View style={styles.button} >
 							
-							<TouchableHighlight title="" onPress={() => this.endereco()} >
+							<TouchableHighlight onPress={() => {this.endereco(this.state.tarefa.endereco)}} >
 								<View>
 									<Image source={endereco} style={styles.imageBar} />
 									<Text style={styles.textButtonBar}>Endereço</Text>
@@ -121,23 +130,37 @@ class TelaPrincipal extends Component {
 					</View>
                 </View>
 				
-				<ImageBackground source={mapa} style={styles.mapaContainer}>	
+				<View style={styles.mapaContainer}>	
 					<View style={styles.mapa}>
-						<Text >mapa</Text>	
+						<Image source={mapa} style={styles.mapa}/>
 					</View>
 					<View style={styles.mapaEndereco}>
 						<Text style={styles.textEndereco}>{this.state.tarefa.endereco}</Text>	
 					</View>
-				</ImageBackground>
+				</View>
 
 				<View style={styles.comentariosContainer}>
-					<Image source={{uri: this.state.tarefa.urlLogo}} style={styles.avatar} />
-					<Text>
-                        comentarios
-                    </Text>
-                    
+					
+
+					<FlatList data={this.state.tarefa.comentarios} 
+                                keyExtractor={item => `${item.id}`} renderItem={(item)  => 
+								<View>
+									<View style={{alignSelf:'center', alignContent:'center'}}>
+									<Image source={{uri: item.item.urlFoto}} style={styles.avatarComen} />
+								</View>
+								
+								<View style={{paddingTop: 20, paddingLeft:10}}>
+									<Text style={styles.descriptionComen}>{item.item.nome}</Text>
+									<Text style={styles.descriptionComen}>{item.item.titulo}</Text>
+									<Text style={styles.descriptionComen}>{item.item.comentario}</Text>
+								</View>
+                                <View style={{paddingTop: 40, paddingLeft:20}}>
+									<Text style={styles.descriptionComen}>{item.item.nota}</Text>
+								</View>
+								</View>
+                    }/>
+
                 </View>
-                
             </View>
         )
     }
@@ -152,34 +175,35 @@ const styles = StyleSheet.create({
     },
     background: {
         flex: 3,
-		
-		
 	},
 	nomeContainer: {
-        flex: 1,
-		fontSize: 30
+        flex: 0.8,
+		fontSize: 30,
+		flexDirection: 'row',
 		
 	},
 	textTitulo: {
         color: '#E08B00',
 		fontSize: 30,
-		paddingTop: 12
+		paddingTop: 0,
+		alignSelf:'center'
     },
     detalheContainer: {
-        flex: 2,
+		flex: 2.3,
+		width: '100%',
 		backgroundColor: '#fff',
 		flexDirection: 'column',
 		alignContent: 'center',
 		alignItems: 'center',
-		justifyContent: 'center'
+		
 	},
 	mapaContainer: {
         flex: 1.5,
         
 	},
 	mapa: {
-        
-        height:80,
+		height: '80%',
+        width: '100%',
 	},
 	mapaEndereco: {
         alignItems: 'flex-end',
@@ -190,13 +214,16 @@ const styles = StyleSheet.create({
         color: '#fff',
 	},
 	comentariosContainer: {
-        flex: 1.5,
-        backgroundColor: '#fff'
+		flex: 1.5,
+		width: '100%',
+		backgroundColor: '#fff',
+		flexDirection: 'row',
+		paddingLeft: 20
 	},
 	buttonBar: {
 		flexDirection: 'row',
-		borderColor: '#AAA',  
-        
+		borderColor: '#F2F2F2',  
+        borderBottomWidth: 1,
 	},
 	button: {
 		flexDirection: 'column',
@@ -206,17 +233,25 @@ const styles = StyleSheet.create({
 	},
 	descriptionContainer: {
 		flexDirection: 'row',
-		paddingTop: 10
+		paddingTop: 10,
+		width: '100%',
 	},
 	descriptionText: {
-		color: '#E08B00'
+		color: '#E08B00',
+		alignSelf: 'center',
+		paddingLeft: 20
+	},
+	descriptionComen: {
+		color: '#E08B00',
+		alignSelf: 'center',
+		
 	},
 	textButtonBar: {
         color: '#E08B00',
         fontSize: 11,
 		alignSelf: 'center',
 		flexDirection: 'column',
-		borderBottomWidth: 1,
+		
 	},
 	imageBar: {
         height: 50,
@@ -225,11 +260,19 @@ const styles = StyleSheet.create({
 		
 	},
 	avatar: {
+        width: 60,
+        height: 60,
+		borderRadius: 100,
+		alignContent: 'flex-start',
+		justifyContent:'flex-start',
+		zIndex: 1,
+		
+	},
+	avatarComen: {
         width: 75,
         height: 75,
 		borderRadius: 100,
         
-        resizeMode: 'contain',
     },
 })
 

@@ -41,7 +41,6 @@ class TelaInicial extends Component {
 
     render() {
         const today = moment().locale('pt-br').format('ddd, D [de] MMMM')
-        console.log('estado' + this.state.tarefas);
         
 		return (
             <View style={styles.container}>
@@ -56,7 +55,7 @@ class TelaInicial extends Component {
                         
                             <View>
                             <FlatList data={this.state.tarefas} 
-                                keyExtractor={item => `${item.id}`} renderItem={(item) => 
+                                keyExtractor={item => `${item.id}`} renderItem={(item)  => 
                                 
                                     <TouchableHighlight onPress={() => this.props.navigation.navigate(
                                         'TelaPrincipal', {id: item.item})}>
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
     taskContainer: {
         flex: 7,
         borderBottomWidth: 2,
-        borderColor: '#AAA',
+        borderColor: '#F2F2F2',
     },
     titleBar: {
         flex: 1,
