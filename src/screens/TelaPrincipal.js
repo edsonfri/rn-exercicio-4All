@@ -85,7 +85,9 @@ class TelaPrincipal extends Component {
 
 				<View style={styles.nomeContainer}>
                     <Text style={styles.textTitulo}>{this.state.tarefa.titulo}</Text>
-					<Image source={{uri: this.state.tarefa.urlLogo}} style={styles.avatar} />
+					<View style={styles.imagePerf}>
+						<Image source={{uri: this.state.tarefa.urlLogo}} style={styles.avatar} />
+					</View>
                 </View>
                
                 <View style={styles.detalheContainer}>
@@ -136,28 +138,30 @@ class TelaPrincipal extends Component {
 					</View>
 					<View style={styles.mapaEndereco}>
 						<Text style={styles.textEndereco}>{this.state.tarefa.endereco}</Text>	
+						<View style={styles.enderecoPeq}>
+							<Image source={endereco} style={styles.imageEnderecoPeq} />
+						</View>
 					</View>
 				</View>
 
 				<View style={styles.comentariosContainer}>
-					
-
 					<FlatList data={this.state.tarefa.comentarios} 
                                 keyExtractor={item => `${item.id}`} renderItem={(item)  => 
-								<View>
-									<View style={{alignSelf:'center', alignContent:'center'}}>
-									<Image source={{uri: item.item.urlFoto}} style={styles.avatarComen} />
-								</View>
-								
-								<View style={{paddingTop: 20, paddingLeft:10}}>
+						<View style={styles.comentariosContainer}>
+							<View >
+								<Image source={{uri: item.item.urlFoto}} style={styles.avatarComen} />
+							</View>
+							<View style={{width:'70%', paddingTop:20}}>
+								<View >
 									<Text style={styles.descriptionComen}>{item.item.nome}</Text>
 									<Text style={styles.descriptionComen}>{item.item.titulo}</Text>
 									<Text style={styles.descriptionComen}>{item.item.comentario}</Text>
 								</View>
-                                <View style={{paddingTop: 40, paddingLeft:20}}>
-									<Text style={styles.descriptionComen}>{item.item.nota}</Text>
-								</View>
-								</View>
+							</View>
+							<View style={{paddingTop:20}}>
+								<Text style={styles.descriptionComen}>{item.item.nota}</Text>
+							</View>
+						</View>
                     }/>
 
                 </View>
@@ -185,9 +189,39 @@ const styles = StyleSheet.create({
 	textTitulo: {
         color: '#E08B00',
 		fontSize: 30,
-		paddingTop: 0,
-		alignSelf:'center'
-    },
+		alignSelf:'center',
+		width: '73%',
+		paddingLeft:15
+	},
+	imagePerf: {
+        width: 75, 
+        height: 75, 
+        bottom: 40, 
+        borderRadius: 100,
+        backgroundColor: '#ffffff',
+        borderColor: '#C0C0C0',
+		borderWidth: 0.5,
+		alignItems: 'center'
+	},
+	enderecoPeq: {
+        width: 35, 
+        height: 35, 
+        bottom: 30, 
+        borderRadius: 100,
+        backgroundColor: '#ffffff',
+        borderColor: '#C0C0C0',
+		borderWidth: 0.5,
+		alignItems: 'center'
+	},
+	imageEnderecoPeq: {
+        width: 40,
+        height: 40,
+		borderRadius: 100,
+		alignContent: 'flex-start',
+		justifyContent:'flex-start',
+		zIndex: 1,
+		
+	},
     detalheContainer: {
 		flex: 2.3,
 		width: '100%',
@@ -195,11 +229,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignContent: 'center',
 		alignItems: 'center',
-		
 	},
 	mapaContainer: {
         flex: 1.5,
-        
 	},
 	mapa: {
 		height: '80%',
@@ -210,15 +242,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#E08B00',
 	},
 	textEndereco: {
-        
-        color: '#fff',
+        paddingRight: 40,
+		color: '#fff',
+		fontSize: 10,
+		alignItems: 'center'
 	},
 	comentariosContainer: {
 		flex: 1.5,
 		width: '100%',
 		backgroundColor: '#fff',
 		flexDirection: 'row',
-		paddingLeft: 20
+		paddingLeft: 10
 	},
 	buttonBar: {
 		flexDirection: 'row',
@@ -243,7 +277,8 @@ const styles = StyleSheet.create({
 	},
 	descriptionComen: {
 		color: '#E08B00',
-		alignSelf: 'center',
+		alignSelf: 'flex-start',
+		paddingLeft: 15,
 		
 	},
 	textButtonBar: {
